@@ -1,0 +1,254 @@
+学习git命令
+
+1.创建版本库
+#版本库、仓库(repository):可简单理解为一个目录文件夹（实际为文件夹中的.git）.
+(1)git init
+初始化仓库，变成可由git管理的仓库。
+
+(2)git add <file>
+将文件添加至仓库的暂存区。
+
+(3)git commit -m "文件提交说明"
+将缓存区的文件提交至仓库的当前分支。
+
+
+2.查看版本状态
+(1)git status
+查看该branch下版本状态。
+
+(2)git diff
+查看版本修改的内容。
+
+
+3.版本回退
+(1)HEAD
+HEAD表示当前版本，HEAD^表示上一个版本，HEAD~100表示往上100个版本。
+
+(2)git reset --hard commit_id
+实现在不同的commit_id版本之间切换。
+
+(3)git log
+查看提交历史，以便确定回退到哪个版本。git log --pretty=oneline 可以
+将提交历史显示为一行，更为优化。
+
+(3)git reflog
+查看命令历史，以便确定要回到未来的哪个版本。
+
+
+4.工作区和暂存区
+#工作区即为仓库目录
+#仓库目录内的.git为版本库，版本库中有暂存区和分支master。
+
+
+5.管理修改
+(1)git diff HEAD -- <file>
+查看工作区和版本库中最新版本的区别
+
+#每次修改，如果不add到暂存区，就不会加入到commit中。
+
+
+6.撤销修改
+(1)git checkout -- file
+当改乱了工作区某个文件内容，使用该命令可以直接丢弃工作区的修改。
+
+(2)git reset HEAD file
+将改乱了工作区某个文件的内容添加到了暂存区，则使用该命令可以在暂存区对该
+文件进行删除。然后执行git checkout -- file 命令。
+
+(3)如已经提交了不合适的版本到版本库，在没有推送到远程库的前提下，可参考版本
+回退方法。
+
+
+7.删除文件
+(1)rm file
+在工作区删除文件
+
+(2)git rm file
+在版本库中间对应文件删除，并且执行git commit命令，实现文件从版本库中删除。
+
+(3)git checkout -- file
+将工作区中被误删的文件恢复，实质是用版本库的版本替换工作区的版本。
+
+
+8.远程仓库
+git的本地仓库和github仓库之间的传输是通过SSH加密的。
+（1）在shell（或Git Bash）中创建SSH Key：
+$ ssh-keygen -t rsa -C "youremail@example.com"
+然后可在主目录中找到.ssh目录，内有id_rsa和id_rsa.pub,即SSH Key之秘钥对。
+
+（2）在GitHub—Accounting settings—SSH Key中添加SSH Key，title任意，文本框中
+粘贴id_rsa.pub。
+
+
+9.添加远程库
+#在GitHub中新建仓库
+(1)git remote add origin git@github.com:user_name/repo_name.git
+将本地仓库与远程仓库关联。
+
+(2)git push -u origin master
+关联后，第一次推送master分支的所有内容。之后的提交使用git push origin master推送
+最新修改。
+
+
+10.从远程仓库克隆
+#本地没有相关库，为远程新建库
+(1)git clone git@github.com:user_name/repo_name.git
+将远程库克隆至本地。
+
+
+11.分支管理
+
+
+12.创建与合并分支
+(1)git branch
+查看分支
+
+(2)git branch <name>
+创建分支
+
+(3)git checkout <name>
+切换分支
+
+(4)git checkout -b <name>
+创建+切换分支
+
+(5)git merge <name>
+合并某分支到当前分支
+
+(6)git branch -d <name>
+删除分支
+
+
+13.解决冲突
+#当Git无法自动合并分支时，就必须首先解决冲突，解决冲突后再提交，合并完成。
+(1)git log --graph --pretty=oneline --abbrev-commit
+可查看分支合并图
+
+
+14.分支管理策略
+#no-ff模式合并分支
+(1)git merge --no-ff -m "合并说明" branch_name
+合并分支时，加上--no-ff参数即可使用普通合并模式，合并后的历史有分支，可看出来曾经
+做过合并，而fast forward合并会丢掉分支信息（Git默认使用）。
+
+
+15.Bug分支
+#手头工作未完，但是又有紧急bug需要去修复。
+(1)git stash
+暂时冻结当前工作
+
+#切换到需要修复的分支，在该分支上创建临时分支进行修复，然后合并，删除临时分支，
+回到之前未完工作分支
+(2)git stash list
+查看被冻结的工作现场
+
+(3)恢复现场并删除stash内容
+方法一:git stash apply恢复现场；git stash drop删除stash内容。
+方法二：git stash pop 恢复现场并删除stash内容。
+
+
+16.Feature分支
+#开发新feature，最好新建一个分支。
+(1)git branch -D <name>
+强行删除分支。当新feature未合并导致git branch -d <name>无法删除分支时。
+
+
+17.多人协作
+
+(1)查看远程库信息，使用git remote -v；
+
+#本地新建的分支如果不推送到远程，对其他人就是不可见的；
+
+
+(2)从本地推送分支，使用git push origin branch-name，如果推送失败，先用git pull抓取远程的新提交；
+
+
+(3)在本地创建和远程分支对应的分支，使用git checkout -b branch-name origin/branch-name，本地和远程分支的名称最好一致；
+
+
+(4)建立本地分支和远程分支的关联，使用git branch --set-upstream branch-name origin/branch-name；
+
+
+(5)从远程抓取分支，使用git pull，如果有冲突，要先处理冲突
+
+
+18.标签管理
+#tag与commit id一样可以对版本进行检索，只是tag更为易记。
+
+
+19.创建标签
+(1)git tag <tagname>
+默认标签打在当前分支最新提交的commit上。
+
+(2)git tag
+查看所有标签。
+
+(3)git tag <tagname> commit_id
+对指定commit新建标签。
+
+(4)git show <tagname>
+查看标签信息。
+
+(5)git tag -a <tagname> -m "标签说明" commit_id
+新建带有标签说明的标签，-a后为标签名，-m后为标签说明。
+
+(6)git tag -s <tagname> -m "标签说明" commit_id
+通过-s用私钥签名一个标签。
+
+
+20.操作标签
+(1)git tag -d tagname
+删除本地标签
+
+(2)git push origin <tagname>
+将一个本地标签推送到远程
+
+(3)git push origin --tags
+将全部未推送过的本地标签推送到远程
+
+(4)git puah origin :refs/tags/<tagname>
+删除远程标签 #删除远程标签前先删除对应的本地标签
+
+
+21.使用github
+(1)Fork
+把开源项目代码fork到自己账户下
+
+(2)git clone git@github.com:user_name/repo_name.git
+把仓库clone到本地
+
+(3)pull request
+请求对方接受自己的修改
+
+
+22.自定义git
+(1)git config --global color.ui true
+让Git显示颜色，让命令输出看起来更加醒目。
+
+
+23.忽略特殊文件
+(1).gitignore文件
+在Git工作区的根目录下创建特殊的.gitignore文件,把要忽略的文件名填进去，Git会自动
+忽略这些文件。
+
+(2)git add -f <file>
+对于被忽略的文件，使用命令可以强制将文件添加至Git。
+
+(3)git check-ignore -v <file>
+该命令检查.gitignore文件是否将文件规则写错。
+
+
+24.配置别名
+#对Git常用命令配置别名，方便操作
+(1)git config --global alias.<别名> <命令名>
+
+
+25.搭建Git服务器
+
+
+26.期末总结
+
+
+
+
+

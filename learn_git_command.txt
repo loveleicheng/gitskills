@@ -246,9 +246,4 @@ $ ssh-keygen -t rsa -C "youremail@example.com"
 25.搭建Git服务器
 
 
-26.期末总结
-
-
-
-
-
+26.总结
